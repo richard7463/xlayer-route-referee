@@ -1,0 +1,8 @@
+{
+  "from_token": "USDC",
+  "to_token": "OKB",
+  "amount": "25",
+  "slippage_percent": "0.5",
+  "preferred_dexes": ["Uniswap"],
+  "banned_dexes": []
+}
