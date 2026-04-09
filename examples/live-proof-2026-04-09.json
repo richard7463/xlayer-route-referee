@@ -1,0 +1,116 @@
+{
+  "captured_at_utc": "2026-04-09T08:00:00Z",
+  "chain_index": "196",
+  "api_base": "https://web3.okx.com",
+  "token_count": 16,
+  "liquidity_sources": [
+    {"id": "34", "name": "Uniswap V2"},
+    {"id": "6484", "name": "Community AMM (V2)"},
+    {"id": "53", "name": "Uniswap V3"},
+    {"id": "6534", "name": "Community AMM (V3)"},
+    {"id": "93", "name": "LFGSwap"},
+    {"id": "169", "name": "QuickSwap V3"},
+    {"id": "230", "name": "Aave V3"},
+    {"id": "194", "name": "iZUMi"},
+    {"id": "330", "name": "CurveNG"},
+    {"id": "318", "name": "DackieSwap V2"},
+    {"id": "350", "name": "DackieSwap V3"},
+    {"id": "317", "name": "X Layer Swap"},
+    {"id": "294", "name": "DYOR swap"},
+    {"id": "516", "name": "DYOR Fun"},
+    {"id": "321", "name": "Revoswap V2"},
+    {"id": "322", "name": "Revoswap V3"},
+    {"id": "340", "name": "StationDEX V3"},
+    {"id": "325", "name": "PotatoSwap"},
+    {"id": "438", "name": "Uniswap V4"},
+    {"id": "517", "name": "OkieSwap V2"},
+    {"id": "518", "name": "OkieSwap V3"},
+    {"id": "520", "name": "Oko swap"},
+    {"id": "526", "name": "flapdotsh"},
+    {"id": "550", "name": "Xdock.meme"},
+    {"id": "549", "name": "Xdock"},
+    {"id": "580", "name": "DYOR swap V3"},
+    {"id": "581", "name": "JaceSwap"},
+    {"id": "582", "name": "SlerfSwap"},
+    {"id": "579", "name": "DFSwap"},
+    {"id": "586", "name": "Inswap"},
+    {"id": "591", "name": "PotatoSwap V3"},
+    {"id": "6483", "name": "OkieStableSwap"},
+    {"id": "6487", "name": "DFS Swap V3"},
+    {"id": "6494", "name": "Uniswap V4 - Aegis V1.1 Hook"}
+  ],
+  "evaluations": [
+    {
+      "pair": "USDC->OKB",
+      "status": "success",
+      "verdict": "execute",
+      "route_risk": "medium",
+      "recommended_route": {
+        "dex_name": "Aggregated",
+        "output_amount": "0.300628493877150646",
+        "output_symbol": "OKB",
+        "price_impact_percent": "0",
+        "route_concentration_score": "0.65"
+      },
+      "alternative_routes": [
+        {
+          "dex_name": "QuickSwap V3",
+          "output_amount": "0.298602416353386338",
+          "output_symbol": "OKB",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.97"
+        },
+        {
+          "dex_name": "Community AMM (V3)",
+          "output_amount": "0.298447187507989293",
+          "output_symbol": "OKB",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.97"
+        }
+      ],
+      "agent_summary": "Verdict: execute. Prefer Aggregated because it offers 0.300628493877150646 OKB with 0% impact. Alternatives checked: QuickSwap V3, Community AMM (V3)."
+    },
+    {
+      "pair": "USDC->USDT",
+      "status": "success",
+      "verdict": "execute",
+      "route_risk": "low",
+      "recommended_route": {
+        "dex_name": "OkieStableSwap",
+        "output_amount": "24.999412",
+        "output_symbol": "USDT",
+        "price_impact_percent": "0",
+        "route_concentration_score": "0.97"
+      },
+      "alternative_routes": [
+        {
+          "dex_name": "Aggregated",
+          "output_amount": "24.999412",
+          "output_symbol": "USDT",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.65"
+        },
+        {
+          "dex_name": "CurveNG",
+          "output_amount": "24.998536",
+          "output_symbol": "USDT",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.97"
+        },
+        {
+          "dex_name": "Community AMM (V3)",
+          "output_amount": "24.655521",
+          "output_symbol": "USDT",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.97"
+        }
+      ],
+      "agent_summary": "Verdict: execute. Prefer OkieStableSwap because it offers 24.999412 USDT with 0% impact. Alternatives checked: Aggregated, CurveNG, Community AMM (V3)."
+    },
+    {
+      "pair": "USDC->WBTC",
+      "status": "error",
+      "error": "OKX API error 82000: Insufficient liquidity"
+    }
+  ]
+}
