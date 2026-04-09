@@ -20,7 +20,7 @@
    - status: done
 
 4. Live quote validation with OnchainOS credentials
-   - status: pending
+   - status: done
 
 5. Submission materials
    - Moltbook post
