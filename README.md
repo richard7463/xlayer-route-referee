@@ -139,6 +139,27 @@ python3 -m route_referee.cli \
 - `ONCHAINOS_CHAIN_INDEX=196`
 - `ONCHAINOS_PROXY=http://127.0.0.1:7890`
 
+The client also accepts the official Dev Portal variable names:
+
+- `OKX_API_KEY`
+- `OKX_SECRET_KEY`
+- `OKX_PASSPHRASE`
+
+## Live Validation
+
+This repo has already been validated against real OnchainOS quote endpoints on **April 9, 2026**.
+
+Live checks completed:
+
+- `USDC -> OKB` returned a successful route comparison
+- `USDC -> USDT` returned a successful route comparison
+- `USDC -> WBTC` returned an honest `Insufficient liquidity` error
+
+Proof files:
+
+- [Live Validation Notes](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
+- [Live Proof JSON](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-2026-04-09.json)
+
 ## Demo Flow
 
 1. Ask the skill for `25 USDC -> OKB`.
@@ -174,7 +195,6 @@ Already done:
 
 Still required before final submission:
 
-- dedicated OnchainOS credentials for live quote testing
 - optional Uniswap-specific tuning for prize targeting
 - public demo recording
 - final X / Moltbook submission posts
@@ -184,3 +204,5 @@ Still required before final submission:
 - [Skill Spec](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/SKILL.md)
 - [Project Positioning](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/project-positioning.md)
 - [Skills Arena Checklist](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/skills-arena-checklist.md)
+- [Live Validation](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
+- [Submission Post](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-post.md)
