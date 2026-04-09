@@ -31,9 +31,9 @@ class OnchainOSError(RuntimeError):
 
 class OnchainOSClient:
     def __init__(self, api_key: str = "", api_secret: str = "", passphrase: str = ""):
-        self.api_key = api_key or os.getenv("ONCHAINOS_API_KEY", "")
-        self.api_secret = api_secret or os.getenv("ONCHAINOS_API_SECRET", "")
-        self.passphrase = passphrase or os.getenv("ONCHAINOS_API_PASSPHRASE", "")
+        self.api_key = api_key or os.getenv("ONCHAINOS_API_KEY", "") or os.getenv("OKX_API_KEY", "") or os.getenv("OK_API_KEY", "")
+        self.api_secret = api_secret or os.getenv("ONCHAINOS_API_SECRET", "") or os.getenv("OKX_SECRET_KEY", "") or os.getenv("OK_SECRET_KEY", "")
+        self.passphrase = passphrase or os.getenv("ONCHAINOS_API_PASSPHRASE", "") or os.getenv("OKX_PASSPHRASE", "") or os.getenv("OK_PASSPHRASE", "")
         self.base_url = API_BASE_URL
         self.chain_index = DEFAULT_CHAIN_INDEX
         self.timeout = int(os.getenv("ONCHAINOS_TIMEOUT", "20"))
