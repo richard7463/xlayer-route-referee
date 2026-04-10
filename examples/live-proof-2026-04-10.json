@@ -1,0 +1,270 @@
+{
+  "captured_at_utc": "2026-04-10T05:48:15.712805+00:00",
+  "chain_index": "196",
+  "api_base": "https://web3.okx.com",
+  "token_count": 16,
+  "liquidity_sources": [
+    {
+      "id": "34",
+      "name": "Uniswap V2"
+    },
+    {
+      "id": "6484",
+      "name": "Community AMM (V2)"
+    },
+    {
+      "id": "53",
+      "name": "Uniswap V3"
+    },
+    {
+      "id": "6534",
+      "name": "Community AMM (V3)"
+    },
+    {
+      "id": "93",
+      "name": "LFGSwap"
+    },
+    {
+      "id": "169",
+      "name": "QuickSwap V3"
+    },
+    {
+      "id": "230",
+      "name": "Aave V3"
+    },
+    {
+      "id": "194",
+      "name": "iZUMi"
+    },
+    {
+      "id": "330",
+      "name": "CurveNG"
+    },
+    {
+      "id": "318",
+      "name": "DackieSwap V2"
+    },
+    {
+      "id": "350",
+      "name": "DackieSwap V3"
+    },
+    {
+      "id": "317",
+      "name": "X Layer Swap"
+    },
+    {
+      "id": "294",
+      "name": "DYOR swap"
+    },
+    {
+      "id": "516",
+      "name": "DYOR Fun"
+    },
+    {
+      "id": "321",
+      "name": "Revoswap V2"
+    },
+    {
+      "id": "322",
+      "name": "Revoswap V3"
+    },
+    {
+      "id": "340",
+      "name": "StationDEX V3"
+    },
+    {
+      "id": "325",
+      "name": "PotatoSwap"
+    },
+    {
+      "id": "438",
+      "name": "Uniswap V4"
+    },
+    {
+      "id": "517",
+      "name": "OkieSwap V2"
+    },
+    {
+      "id": "518",
+      "name": "OkieSwap V3"
+    },
+    {
+      "id": "520",
+      "name": "Oko swap"
+    },
+    {
+      "id": "526",
+      "name": "flapdotsh"
+    },
+    {
+      "id": "550",
+      "name": "Xdock.meme"
+    },
+    {
+      "id": "549",
+      "name": "Xdock"
+    },
+    {
+      "id": "580",
+      "name": "DYOR swap V3"
+    },
+    {
+      "id": "581",
+      "name": "JaceSwap"
+    },
+    {
+      "id": "582",
+      "name": "SlerfSwap"
+    },
+    {
+      "id": "579",
+      "name": "DFSwap"
+    },
+    {
+      "id": "586",
+      "name": "Inswap"
+    },
+    {
+      "id": "591",
+      "name": "PotatoSwap V3"
+    },
+    {
+      "id": "6483",
+      "name": "OkieStableSwap"
+    },
+    {
+      "id": "6487",
+      "name": "DFS Swap V3"
+    },
+    {
+      "id": "6494",
+      "name": "Uniswap V4 - Aegis V1.1 Hook"
+    }
+  ],
+  "evaluations": [
+    {
+      "pair": "USDC->OKB",
+      "status": "success",
+      "response": {
+        "request": {
+          "from_token": "USDC",
+          "to_token": "OKB",
+          "amount": "25",
+          "slippage_percent": "0.5",
+          "preferred_dexes": [
+            "Uniswap V3"
+          ],
+          "banned_dexes": []
+        },
+        "verdict": "execute",
+        "route_risk": "medium",
+        "recommended_route": {
+          "dex_name": "Aggregated",
+          "dex_id": "aggregated",
+          "output_amount": "0.297907678843008126",
+          "output_symbol": "OKB",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.65",
+          "fallback_count": 0,
+          "verdict_hint": "execute",
+          "reason": "Aggregated returns 0.297907678843008126 output with 0% impact and 0 fallback venues."
+        },
+        "alternative_routes": [
+          {
+            "dex_name": "QuickSwap V3",
+            "dex_id": "169",
+            "output_amount": "0.296627251809568784",
+            "output_symbol": "OKB",
+            "price_impact_percent": "0",
+            "route_concentration_score": "1.00",
+            "fallback_count": 33,
+            "verdict_hint": "execute",
+            "reason": "QuickSwap V3 returns 0.296627251809568784 output with 0% impact and 33 fallback venues."
+          },
+          {
+            "dex_name": "Community AMM (V3)",
+            "dex_id": "6534",
+            "output_amount": "0.296394865425660391",
+            "output_symbol": "OKB",
+            "price_impact_percent": "0",
+            "route_concentration_score": "1.00",
+            "fallback_count": 33,
+            "verdict_hint": "execute",
+            "reason": "Community AMM (V3) returns 0.296394865425660391 output with 0% impact and 33 fallback venues."
+          }
+        ],
+        "agent_summary": "Verdict: execute. Prefer Aggregated because it offers 0.297907678843008126 OKB with 0% impact. Alternatives checked: QuickSwap V3, Community AMM (V3)."
+      }
+    },
+    {
+      "pair": "USDC->USDT",
+      "status": "success",
+      "response": {
+        "request": {
+          "from_token": "USDC",
+          "to_token": "USDT",
+          "amount": "25",
+          "slippage_percent": "0.5",
+          "preferred_dexes": [
+            "Uniswap V3"
+          ],
+          "banned_dexes": []
+        },
+        "verdict": "execute",
+        "route_risk": "medium",
+        "recommended_route": {
+          "dex_name": "Aggregated",
+          "dex_id": "aggregated",
+          "output_amount": "25.001436",
+          "output_symbol": "USDT",
+          "price_impact_percent": "0",
+          "route_concentration_score": "0.65",
+          "fallback_count": 0,
+          "verdict_hint": "execute",
+          "reason": "Aggregated returns 25.001436 output with 0% impact and 0 fallback venues."
+        },
+        "alternative_routes": [
+          {
+            "dex_name": "OkieStableSwap",
+            "dex_id": "6483",
+            "output_amount": "24.998845",
+            "output_symbol": "USDT",
+            "price_impact_percent": "0",
+            "route_concentration_score": "1.00",
+            "fallback_count": 33,
+            "verdict_hint": "execute",
+            "reason": "OkieStableSwap returns 24.998845 output with 0% impact and 33 fallback venues."
+          },
+          {
+            "dex_name": "CurveNG",
+            "dex_id": "330",
+            "output_amount": "24.998688",
+            "output_symbol": "USDT",
+            "price_impact_percent": "0",
+            "route_concentration_score": "1.00",
+            "fallback_count": 33,
+            "verdict_hint": "execute",
+            "reason": "CurveNG returns 24.998688 output with 0% impact and 33 fallback venues."
+          },
+          {
+            "dex_name": "Community AMM (V3)",
+            "dex_id": "6534",
+            "output_amount": "24.650053",
+            "output_symbol": "USDT",
+            "price_impact_percent": "0",
+            "route_concentration_score": "1.00",
+            "fallback_count": 33,
+            "verdict_hint": "execute",
+            "reason": "Community AMM (V3) returns 24.650053 output with 0% impact and 33 fallback venues."
+          }
+        ],
+        "agent_summary": "Verdict: execute. Prefer Aggregated because it offers 25.001436 USDT with 0% impact. Alternatives checked: OkieStableSwap, CurveNG, Community AMM (V3)."
+      }
+    },
+    {
+      "pair": "USDC->WBTC",
+      "status": "error",
+      "error": "OKX API error 82000: Insufficient liquidity"
+    }
+  ]
+}

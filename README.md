@@ -93,6 +93,13 @@ Another agent can take the recommendation and call a wallet or swap skill afterw
 
 The project is also positioned to compete for `Best Uniswap integration` by explicitly comparing Uniswap against alternative X Layer routes whenever Uniswap liquidity is available in the OnchainOS source list.
 
+## Onchain Identity
+
+- network: `X Layer`
+- chain index: `196`
+- submission wallet: `0xdbc8e35ea466f85d57c0cc1517a81199b8549f04`
+- deployment model: no custom contract deployment; this skill runs as an offchain agent capability and uses OnchainOS quote surfaces plus an Agentic Wallet identity for hackathon submission
+
 ## Working Mechanics
 
 1. An agent provides a swap intent.
@@ -147,7 +154,7 @@ The client also accepts the official Dev Portal variable names:
 
 ## Live Validation
 
-This repo has already been validated against real OnchainOS quote endpoints on **April 9, 2026**.
+This repo has already been validated against real OnchainOS quote endpoints on **April 10, 2026**.
 
 Live checks completed:
 
@@ -158,7 +165,7 @@ Live checks completed:
 Proof files:
 
 - [Live Validation Notes](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
-- [Live Proof JSON](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-2026-04-09.json)
+- [Latest Live Proof JSON](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-latest.json)
 
 ## Demo Flow
 
@@ -192,12 +199,14 @@ Already done:
 - route comparison engine
 - CLI demo surface
 - Skills Arena positioning docs
+- public GitHub repo
+- live quote validation proof
 
 Still required before final submission:
 
-- optional Uniswap-specific tuning for prize targeting
 - public demo recording
 - final X / Moltbook submission posts
+- submission form packaging
 
 ## Docs
 
@@ -206,3 +215,4 @@ Still required before final submission:
 - [Skills Arena Checklist](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/skills-arena-checklist.md)
 - [Live Validation](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
 - [Submission Post](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-post.md)
+- [Submission Runbook](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-runbook.md)

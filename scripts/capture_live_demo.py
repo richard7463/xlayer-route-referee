@@ -15,7 +15,7 @@ from route_referee.referee import RouteReferee
 
 ROOT = Path(__file__).resolve().parents[1]
 ENV_PATH = ROOT / ".env"
-OUTPUT_PATH = ROOT / "examples" / "live-proof-2026-04-09.json"
+OUTPUT_DIR = ROOT / "examples"
 
 
 def load_env(path: Path) -> None:
@@ -90,16 +90,23 @@ def main() -> None:
                 }
             )
 
+    captured_at = datetime.now(timezone.utc)
+    dated_output_path = OUTPUT_DIR / f"live-proof-{captured_at.date().isoformat()}.json"
+    latest_output_path = OUTPUT_DIR / "live-proof-latest.json"
+
     payload = {
-        "captured_at_utc": datetime.now(timezone.utc).isoformat(),
+        "captured_at_utc": captured_at.isoformat(),
         "chain_index": client.chain_index,
         "api_base": client.base_url,
         "token_count": len(client.supported_tokens()),
         "liquidity_sources": client.liquidity_sources(),
         "evaluations": evaluations,
     }
-    OUTPUT_PATH.write_text(json.dumps(payload, indent=2))
-    print(OUTPUT_PATH)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    rendered = json.dumps(payload, indent=2)
+    dated_output_path.write_text(rendered)
+    latest_output_path.write_text(rendered)
+    print(dated_output_path)
 
 
 if __name__ == "__main__":

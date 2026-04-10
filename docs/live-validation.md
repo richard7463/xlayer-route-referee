@@ -1,6 +1,6 @@
 # Live Validation
 
-This project has already been validated against real OnchainOS quote endpoints on **April 9, 2026**.
+This project has already been validated against real OnchainOS quote endpoints on **April 10, 2026**.
 
 ## Environment
 
@@ -27,7 +27,7 @@ This project has already been validated against real OnchainOS quote endpoints o
 - verdict: `execute`
 - route risk: `medium`
 - best route: `Aggregated`
-- best quoted output: `0.300628493877150646 OKB`
+- best quoted output: `0.297907678843008126 OKB`
 - strongest named alternatives:
   - `QuickSwap V3`
   - `Community AMM (V3)`
@@ -35,11 +35,11 @@ This project has already been validated against real OnchainOS quote endpoints o
 ### USDC -> USDT
 
 - verdict: `execute`
-- route risk: `low`
-- best route: `OkieStableSwap`
-- best quoted output: `24.999412 USDT`
+- route risk: `medium`
+- best route: `Aggregated`
+- best quoted output: `25.001436 USDT`
 - strongest named alternatives:
-  - `Aggregated`
+  - `OkieStableSwap`
   - `CurveNG`
   - `Community AMM (V3)`
 
@@ -50,7 +50,7 @@ This project has already been validated against real OnchainOS quote endpoints o
 
 ## Proof Files
 
-- [live-proof-2026-04-09.json](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-2026-04-09.json)
+- [live-proof-latest.json](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-latest.json)
 
 ## Why This Matters
 

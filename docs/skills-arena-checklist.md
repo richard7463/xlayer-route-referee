@@ -3,7 +3,7 @@
 ## Required
 
 1. Public GitHub repo
-   - status: pending initial push
+   - status: done
 
 2. README with required sections
    - project intro
@@ -39,8 +39,8 @@ Use this framing consistently:
 
 ## Final Blocking Items
 
-1. dedicated OnchainOS API credentials
-2. live screenshots from real quote runs
-3. Moltbook submission post
-4. X post link
-5. short demo video
+1. live screenshots from real quote runs
+2. Moltbook submission post
+3. X post link
+4. short demo video
+5. Google Form submission package

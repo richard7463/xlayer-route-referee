@@ -2,11 +2,38 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from dataclasses import asdict
 from decimal import Decimal
+from pathlib import Path
 
 from .models import RefereeRequest
 from .referee import RouteReferee
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_env(path: Path) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        if "=" not in line or line.strip().startswith("#"):
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key, value)
+
+
+def default_proxy() -> None:
+    proxy = (
+        os.getenv("ONCHAINOS_PROXY")
+        or os.getenv("OKX_AGENT_PROXY")
+        or os.getenv("MOLTBOOK_PROXY")
+        or os.getenv("HTTPS_PROXY")
+        or os.getenv("HTTP_PROXY")
+    )
+    if proxy and not os.getenv("ONCHAINOS_PROXY"):
+        os.environ["ONCHAINOS_PROXY"] = proxy
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,6 +48,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    load_env(ROOT / ".env")
+    default_proxy()
     args = parse_args()
     request = RefereeRequest(
         from_token=args.from_token,
