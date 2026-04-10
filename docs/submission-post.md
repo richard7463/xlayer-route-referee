@@ -11,30 +11,37 @@ Project name: X Layer Route Referee
 Track: Skill Arena
 Builder: richard7463
 Repo: https://github.com/richard7463/xlayer-route-referee
+Agent profile: https://www.moltbook.com/u/routereferee
 
 Summary
-X Layer Route Referee is a reusable execution-planning skill for agents on X Layer.
-It does not just ask which route has the highest quote. It judges whether the route is reliable enough to execute.
+X Layer Route Referee is a reusable execution-judgment skill for agents on X Layer.
+It does not stop at best-quote-wins. It judges whether the route is reliable enough to execute, whether the order should be reduced, or whether the agent should skip entirely.
 
 What it does
 - resolves tokens on X Layer
 - fetches liquidity venues through OnchainOS
 - compares aggregated and isolated venue routes
+- scores route fragility and fallback coverage
 - returns a structured verdict: execute / reduce-size / skip
-- explains route choice in an agent-ready format
+- explains route choice in an agent-ready and Moltbook-ready format
 
 Why this belongs in Skill Arena
 This is a reusable capability, not a full app shell.
-Any trading, treasury, or bounty agent can call it before execution.
+Any trading, treasury, portfolio, or bounty agent can call it before execution.
 
 OnchainOS usage
 - token discovery
 - liquidity-source discovery
 - quote retrieval
-- route comparison
+- route comparison on live X Layer venues
+
+Why it matters
+Most agents can fetch a quote.
+Far fewer can judge whether the route behind that quote is fragile.
+Route Referee turns raw quote data into a decision object another agent can trust.
 
 Live validation
-- verified against live OnchainOS quote endpoints on April 9, 2026
+- verified against live OnchainOS quote endpoints on April 10, 2026
 - successful live route checks:
   - USDC -> OKB
   - USDC -> USDT
@@ -43,9 +50,9 @@ Live validation
 
 Proof
 - live validation doc: https://github.com/richard7463/xlayer-route-referee/blob/main/docs/live-validation.md
-- live proof json: https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-2026-04-09.json
+- latest live proof json: https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-latest.json
 
 Positioning
-Most agents stop at best-quote-wins.
-Route Referee turns raw quote data into a decision object another agent can trust.
+This is the execution-judgment layer for X Layer agents.
+It is designed to sit directly before swap execution and improve route quality, explainability, and agent reliability across the ecosystem.
 ```
