@@ -44,6 +44,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--slippage", default="0.5")
     parser.add_argument("--prefer-dex", action="append", default=[])
     parser.add_argument("--ban-dex", action="append", default=[])
+    parser.add_argument("--agent", default="manual-agent")
+    parser.add_argument("--intent-id", default="manual-intent")
+    parser.add_argument("--reason", default="agent requested route preflight")
+    parser.add_argument("--max-impact", default="1.20")
+    parser.add_argument("--min-fallbacks", default=1, type=int)
     return parser.parse_args()
 
 
@@ -58,6 +63,11 @@ def main() -> None:
         slippage_percent=Decimal(args.slippage),
         preferred_dexes=args.prefer_dex,
         banned_dexes=args.ban_dex,
+        agent_name=args.agent,
+        intent_id=args.intent_id,
+        reason=args.reason,
+        max_price_impact_percent=Decimal(args.max_impact),
+        min_fallback_count=args.min_fallbacks,
     )
     referee = RouteReferee()
     response = referee.evaluate(request)

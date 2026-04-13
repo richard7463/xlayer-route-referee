@@ -2,18 +2,20 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import asdict
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, List
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 from route_referee.client import OnchainOSClient, OnchainOSError
 from route_referee.models import RefereeRequest
 from route_referee.referee import RouteReferee
 
-
-ROOT = Path(__file__).resolve().parents[1]
 ENV_PATH = ROOT / ".env"
 OUTPUT_DIR = ROOT / "examples"
 
@@ -72,6 +74,11 @@ def main() -> None:
                     to_token=to_token,
                     amount=amount,
                     preferred_dexes=["Uniswap V3"],
+                    agent_name="route-referee-demo-agent",
+                    intent_id=f"live-{from_token.lower()}-{to_token.lower()}",
+                    reason="pre-execution route quality check for an autonomous X Layer agent",
+                    max_price_impact_percent=Decimal("1.20"),
+                    min_fallback_count=1,
                 )
             )
             evaluations.append(
@@ -96,6 +103,8 @@ def main() -> None:
 
     payload = {
         "captured_at_utc": captured_at.isoformat(),
+        "referee_model": "pre_execution_route_referee",
+        "decision_actions": ["execute", "resize", "retry", "block"],
         "chain_index": client.chain_index,
         "api_base": client.base_url,
         "token_count": len(client.supported_tokens()),

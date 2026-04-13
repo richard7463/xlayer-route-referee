@@ -1,18 +1,20 @@
 # Project Positioning
 
-X Layer Route Referee is a reusable execution-planning skill for X Layer agents.
+X Layer Route Referee is a reusable pre-execution judgment skill for X Layer agents.
 
 ## Core Claim
 
 Agents should not treat the highest quote as the only truth.
-They need a route judge.
+They need a referee before execution.
 
 ## What The Skill Does
 
-- receives one swap intent
+- receives one agent trade intent
 - compares route candidates
 - scores route quality
-- returns one final execution verdict
+- checks price impact, fallback coverage, banned venues, and reason presence
+- returns one final verdict: `execute`, `resize`, `retry`, or `block`
+- emits a proof ID and agent-ready explanation
 
 ## Why It Fits Skills Arena
 
@@ -24,10 +26,12 @@ It is a modular capability that any agent can call before execution.
 A thin wrapper only returns numbers.
 Route Referee returns:
 
-- a recommendation
+- a decision
+- a reason
 - alternative routes
-- route-quality reasoning
-- execution caution when the quote is too fragile
+- route-quality checks
+- execution caution when the quote is fragile
+- honest failure proof when liquidity is insufficient
 
 ## Prize Strategy
 
@@ -35,8 +39,9 @@ Primary target:
 
 - `Skills Arena`
 
-Strong special-prize angle:
+Strong special-prize angles:
 
 - `Best Uniswap integration`
+- `Best data analyst`
 
-The project can explicitly compare Uniswap against other X Layer venues and explain when Uniswap wins or loses.
+The project can explicitly compare Uniswap against other X Layer venues and explain when Uniswap wins or loses. It also turns market route data into agent decisions.

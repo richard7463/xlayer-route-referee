@@ -1,129 +1,162 @@
 # X Layer Route Referee
 
-Reusable execution-planning skill for X Layer agents.
+![Track](https://img.shields.io/badge/Track-Build%20X%20Skills%20Arena-0f766e)
+![Skill](https://img.shields.io/badge/Skill-Pre--Execution%20Referee-111827)
+![Network](https://img.shields.io/badge/Network-X%20Layer%20196-2563eb)
+![Proof](https://img.shields.io/badge/Live%20Proof-Apr%2013%202026-success)
 
-`X Layer Route Referee` is built for the **OKX Build X Hackathon Skills Arena**.
-It helps any agent decide whether a swap should be executed, which route should be preferred, and how much route risk is hidden behind the best quote.
+Reusable pre-execution referee skill for autonomous X Layer agents.
+
+> Best quote is not enough. Agents need a referee before they trade.
+
+## Judge Summary
+
+| What judges should look for | Evidence |
+| --- | --- |
+| Reusable Skills Arena primitive | Any trading, treasury, payment, or bounty agent can call it before swap execution. |
+| OnchainOS integration | Uses live OnchainOS token discovery, liquidity-source discovery, and quote endpoints on X Layer. |
+| Agent decision surface | Converts route data into `execute`, `resize`, `retry`, or `block`. |
+| Proof-oriented output | Every evaluation includes checks, decision rationale, route candidates, and `proof_id`. |
+| Honest failure handling | Captures insufficient-liquidity cases instead of hiding them. |
+| X Layer ecosystem fit | Built around chain index `196`, X Layer DEX venues, Uniswap routes, and Agentic Wallet submission identity. |
 
 ## One-Line Pitch
 
-Give any agent a swap intent and Route Referee returns the best route, fallback routes, route concentration risk, price impact context, and an execution recommendation.
+X Layer Route Referee turns an agent trade intent into a pre-execution verdict: execute, resize, retry, or block.
 
-## Why This Fits Skills Arena
+## Why This Exists
 
-This project is a reusable skill, not a full product shell.
+Most agent execution stacks stop at:
 
-Its job is narrow and valuable:
+```text
+fetch quote -> pick best output -> execute
+```
 
-- compare DEX routes on X Layer
-- score route quality and route fragility
-- produce a structured recommendation another agent can execute
-- explain the decision in agent-friendly and human-friendly form
-
-That maps directly to the Skills Arena requirement: build a capability other agents can call.
-
-## Core Skill Contract
-
-Input:
-
-- chain
-- from token
-- to token
-- amount
-- slippage tolerance
-- optional preferred DEX list
-- optional banned DEX list
-
-Output:
-
-- best route candidate
-- ranked alternative routes
-- route concentration score
-- price impact assessment
-- execution verdict: `execute`, `reduce-size`, or `skip`
-- explanation block suitable for agent logs or Moltbook posts
-
-## Project Intro
-
-Most agent execution stacks stop at `best quote wins`.
-That is not enough.
-
-A route can have the best quoted output while still being fragile because of:
+That is too weak for autonomous agents. A route can have the best quoted output while still being fragile because of:
 
 - high price impact
 - single-route concentration
-- dependence on one liquidity venue
-- poor fallback coverage
-- size sensitivity
+- no fallback venue
+- banned or unwanted venues
+- low-liquidity tails
+- missing execution reason
 
-Route Referee exists to turn raw quote data into a decision object another agent can trust.
+Route Referee sits immediately before swap execution and answers the real question:
 
-## Architecture Overview
+```text
+should this agent execute this route right now?
+```
 
-There are four layers:
+## Core Skill Contract
 
-1. `route_referee.client.OnchainOSClient`
-   - signs and sends requests to OnchainOS DEX endpoints
-   - fetches supported tokens, liquidity sources, and quotes
+Input: agent trade intent.
 
-2. `route_referee.referee.RouteReferee`
-   - expands a swap intent into route candidates
-   - compares per-DEX and blended route options
-   - computes route-quality and route-risk scores
+```json
+{
+  "agent_name": "flasharb",
+  "intent_id": "arb-probe-104",
+  "from_token": "USDC",
+  "to_token": "OKB",
+  "amount": "25",
+  "slippage_percent": "0.5",
+  "preferred_dexes": ["Uniswap V3"],
+  "banned_dexes": [],
+  "reason": "pre-execution route quality check",
+  "max_price_impact_percent": "1.20",
+  "min_fallback_count": 1
+}
+```
 
-3. `route_referee.models`
-   - typed request and response models
-   - stable output shape for downstream agents
+Output: route proof and verdict.
 
-4. `route_referee.cli`
-   - local CLI entrypoint for demos, screenshots, and agent testing
+```json
+{
+  "verdict": "execute",
+  "route_risk": "medium",
+  "proof_id": "route_referee_66ae6fe48c673a5f",
+  "decision": {
+    "action": "execute",
+    "risk_level": "medium",
+    "recommended_size_multiplier": "1.00",
+    "policy_hits": ["route_within_referee_limits"]
+  },
+  "checks": [
+    {"id": "quote_available", "ok": true},
+    {"id": "price_impact", "ok": true},
+    {"id": "fallback_coverage", "ok": true},
+    {"id": "banned_dex_exclusion", "ok": true},
+    {"id": "agent_reason", "ok": true}
+  ]
+}
+```
 
-## Onchain OS / Uniswap Skill Usage
+## Decision Actions
 
-Current code is designed around official OnchainOS DEX surfaces:
+| Action | Meaning |
+| --- | --- |
+| `execute` | Route is acceptable under current quote, impact, fallback, and policy checks. |
+| `resize` | Route exists, but size should be reduced before execution. |
+| `retry` | Route is not safe enough now; try again or ask another venue/source. |
+| `block` | Route should not execute. |
 
-- token discovery
-- liquidity source discovery
-- quote retrieval
-- route comparison per DEX
-- optional swap-planning handoff
+## Live Validation
 
-The evaluation logic is meant to sit in front of execution.
-Another agent can take the recommendation and call a wallet or swap skill afterward.
+Latest proof was captured against live OnchainOS quote endpoints on **April 13, 2026**.
 
-The project is also positioned to compete for `Best Uniswap integration` by explicitly comparing Uniswap against alternative X Layer routes whenever Uniswap liquidity is available in the OnchainOS source list.
+| Pair | Result | Verdict / Error | Proof |
+| --- | --- | --- | --- |
+| `USDC -> OKB` | success | `execute`, medium risk | `route_referee_66ae6fe48c673a5f` |
+| `USDC -> USDT` | success | `execute`, low risk | `route_referee_c6c38d0ef9b68647` |
+| `USDC -> WBTC` | honest failure | `OKX API error 82000: Insufficient liquidity` | captured in proof JSON |
+
+Proof files:
+
+- [`examples/live-proof-latest.json`](examples/live-proof-latest.json)
+- [`examples/live-proof-2026-04-13.json`](examples/live-proof-2026-04-13.json)
+- [`docs/live-validation.md`](docs/live-validation.md)
+
+## Architecture
+
+```text
+agent trade intent
+  -> token resolver
+  -> OnchainOS liquidity source discovery
+  -> aggregated quote
+  -> isolated venue quotes
+  -> route risk scoring
+  -> policy checks
+  -> execute / resize / retry / block decision
+  -> proof packet for logs, Moltbook, or downstream agents
+```
+
+Code layout:
+
+| Layer | Path | Purpose |
+| --- | --- | --- |
+| Skill spec | [`SKILL.md`](SKILL.md) | Agent-facing invocation contract. |
+| Models | [`route_referee/models.py`](route_referee/models.py) | Typed request, route, checks, decision, response. |
+| Referee engine | [`route_referee/referee.py`](route_referee/referee.py) | Scores routes and creates pre-execution verdicts. |
+| OnchainOS client | [`route_referee/client.py`](route_referee/client.py) | HMAC-signed access to OKX / OnchainOS DEX endpoints. |
+| CLI | [`route_referee/cli.py`](route_referee/cli.py) | Local and OpenClaw demo entrypoint. |
+| Live capture | [`scripts/capture_live_demo.py`](scripts/capture_live_demo.py) | Generates dated proof JSON from live endpoints. |
+
+## OnchainOS / Uniswap Usage
+
+Route Referee uses official OnchainOS DEX surfaces:
+
+- token discovery: `/api/v6/dex/aggregator/all-tokens`
+- liquidity sources: `/api/v6/dex/aggregator/get-liquidity`
+- route quotes: `/api/v6/dex/aggregator/quote`
+- Uniswap comparison: preferred route can explicitly include `Uniswap V3`; live source list includes Uniswap V2, Uniswap V3, Uniswap V4, and Uniswap hook routes when available
+
+The skill does not custody funds. It is designed to sit before an Agentic Wallet / swap skill.
 
 ## Onchain Identity
 
 - network: `X Layer`
 - chain index: `196`
 - submission wallet: `0xdbc8e35ea466f85d57c0cc1517a81199b8549f04`
-- deployment model: no custom contract deployment; this skill runs as an offchain agent capability and uses OnchainOS quote surfaces plus an Agentic Wallet identity for hackathon submission
-
-## Working Mechanics
-
-1. An agent provides a swap intent.
-2. Route Referee resolves token metadata on X Layer.
-3. It fetches available liquidity sources.
-4. It requests a baseline quote.
-5. It requests isolated candidate quotes for major venues when available.
-6. It ranks routes by output, price impact, venue concentration, and fallback quality.
-7. It returns a structured recommendation object.
-8. The calling agent can then execute, resize, or skip.
-
-## Example Output
-
-```json
-{
-  "verdict": "execute",
-  "recommended_dex": "Uniswap V3",
-  "recommended_output": "104.283194",
-  "route_risk": "medium",
-  "price_impact_pct": "0.42",
-  "fallback_count": 2,
-  "reason": "Uniswap V3 produced the strongest output with acceptable impact and two viable fallback venues."
-}
-```
+- deployment model: offchain reusable skill with OnchainOS quote access and Agentic Wallet identity for hackathon submission
 
 ## Local Run
 
@@ -132,58 +165,45 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
+python3 -m pytest -q
 python3 -m route_referee.cli \
+  --agent flasharb \
+  --intent-id arb-probe-104 \
   --from-token USDC \
   --to-token OKB \
-  --amount 25
+  --amount 25 \
+  --prefer-dex "Uniswap V3" \
+  --reason "pre-execution route quality check"
 ```
 
 ## Environment Variables
 
-- `ONCHAINOS_API_KEY`
-- `ONCHAINOS_API_SECRET`
-- `ONCHAINOS_API_PASSPHRASE`
+Required for live OnchainOS validation:
+
+- `ONCHAINOS_API_KEY` or `OKX_API_KEY`
+- `ONCHAINOS_API_SECRET` or `OKX_SECRET_KEY`
+- `ONCHAINOS_API_PASSPHRASE` or `OKX_PASSPHRASE`
 - `ONCHAINOS_CHAIN_INDEX=196`
+
+Optional on local Mac:
+
 - `ONCHAINOS_PROXY=http://127.0.0.1:7890`
 
-The client also accepts the official Dev Portal variable names:
-
-- `OKX_API_KEY`
-- `OKX_SECRET_KEY`
-- `OKX_PASSPHRASE`
-
-## Live Validation
-
-This repo has already been validated against real OnchainOS quote endpoints on **April 10, 2026**.
-
-Live checks completed:
-
-- `USDC -> OKB` returned a successful route comparison
-- `USDC -> USDT` returned a successful route comparison
-- `USDC -> WBTC` returned an honest `Insufficient liquidity` error
-
-Proof files:
-
-- [Live Validation Notes](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
-- [Latest Live Proof JSON](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/examples/live-proof-latest.json)
+OpenClaw/server usually should not set a proxy unless required.
 
 ## Demo Flow
 
-1. Ask the skill for `25 USDC -> OKB`.
-2. Show the ranked route candidates.
-3. Show why the top route won.
-4. Show when the skill downgrades a route to `reduce-size` or `skip`.
+1. Show an agent trade intent: `USDC -> OKB`.
+2. Run the CLI and show `execute / resize / retry / block` output.
+3. Open `examples/live-proof-latest.json`.
+4. Show the honest failure case for `USDC -> WBTC`.
+5. Explain that another agent can use this verdict before calling Agentic Wallet execution.
 
 ## Submission Positioning
 
-This repo should be submitted to the **Skills Arena**, not the X Layer Arena.
+This repo should be submitted to the **Skills Arena**.
 
-Why:
-
-- it is a reusable capability
-- it has a clean invocation boundary
-- any trading, treasury, or bounty agent can call it
-- it can be demonstrated without a full product wrapper
+It is not a trading bot. It is a reusable pre-execution referee that improves agent reliability across trading, treasury, payment, and DeFi workflows.
 
 ## Team
 
@@ -191,28 +211,31 @@ Why:
 
 ## Status
 
-Already done:
+Done:
 
-- standalone repo structure
+- public GitHub repo
 - reusable skill specification
 - OnchainOS client layer
+- pre-execution referee model
 - route comparison engine
 - CLI demo surface
-- Skills Arena positioning docs
-- public GitHub repo
 - live quote validation proof
+- Skills Arena docs
+- Moltbook / X draft posts
 
-Still required before final submission:
+Manual submission assets to attach after repo push:
 
 - public demo recording
-- final X / Moltbook submission posts
-- submission form packaging
+- final Moltbook post link
+- final X post link
+- Google Form submission
 
 ## Docs
 
-- [Skill Spec](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/SKILL.md)
-- [Project Positioning](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/project-positioning.md)
-- [Skills Arena Checklist](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/skills-arena-checklist.md)
-- [Live Validation](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/live-validation.md)
-- [Submission Post](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-post.md)
-- [Submission Runbook](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-runbook.md)
+- [`SKILL.md`](SKILL.md)
+- [`docs/project-positioning.md`](docs/project-positioning.md)
+- [`docs/skills-arena-checklist.md`](docs/skills-arena-checklist.md)
+- [`docs/live-validation.md`](docs/live-validation.md)
+- [`docs/submission-post.md`](docs/submission-post.md)
+- [`docs/submission-runbook.md`](docs/submission-runbook.md)
+- [`docs/x-post.md`](docs/x-post.md)

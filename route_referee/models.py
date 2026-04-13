@@ -20,6 +20,11 @@ class RefereeRequest:
     slippage_percent: Decimal = Decimal("0.5")
     preferred_dexes: List[str] = field(default_factory=list)
     banned_dexes: List[str] = field(default_factory=list)
+    agent_name: str = "unknown-agent"
+    intent_id: str = "manual-intent"
+    reason: str = "agent requested route preflight"
+    max_price_impact_percent: Decimal = Decimal("1.20")
+    min_fallback_count: int = 1
 
 
 @dataclass(frozen=True)
@@ -36,10 +41,30 @@ class RouteCandidate:
 
 
 @dataclass(frozen=True)
+class RefereeCheck:
+    id: str
+    ok: bool
+    level: str
+    note: str
+
+
+@dataclass(frozen=True)
+class RefereeDecision:
+    action: str
+    risk_level: str
+    recommended_size_multiplier: Decimal
+    policy_hits: List[str]
+    rationale: str
+
+
+@dataclass(frozen=True)
 class RefereeResponse:
     request: RefereeRequest
     verdict: str
     route_risk: str
     recommended_route: RouteCandidate
     alternative_routes: List[RouteCandidate]
+    checks: List[RefereeCheck]
+    decision: RefereeDecision
+    proof_id: str
     agent_summary: str

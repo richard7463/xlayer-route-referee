@@ -1,6 +1,6 @@
 # Submission Runbook
 
-Use this checklist to push `X Layer Route Referee` from repo-ready to submission-ready.
+Use this checklist to push `X Layer Route Referee` from repo-ready to final Skills Arena submission.
 
 ## 1. Repo
 
@@ -14,45 +14,51 @@ Use this checklist to push `X Layer Route Referee` from repo-ready to submission
   - team
   - X Layer ecosystem positioning
   - onchain identity
+  - latest proof links
 
 ## 2. Live Proof
 
-- run `python3 scripts/capture_live_demo.py`
-- keep:
-  - `examples/live-proof-latest.json`
-  - the dated proof file for the run day
-- capture one CLI screenshot for:
-  - `USDC -> OKB`
-  - `USDC -> USDT`
-  - one honest failure case
+Run:
 
-## 3. Public Posts
+```bash
+python3 -m pytest -q
+python3 scripts/capture_live_demo.py
+```
 
-- post the Moltbook submission using [submission-post.md](/Users/yanqing/Documents/GitHub/miraix-interface/projects/xlayer-route-referee/docs/submission-post.md)
-- publish an X post with:
-  - project name
-  - repo link
-  - screenshot
-  - `#onchainos`
-  - `@XLayerOfficial`
+Keep:
 
-## 4. Submission Form
+- `examples/live-proof-latest.json`
+- `examples/live-proof-YYYY-MM-DD.json`
 
-Prepare these links:
+Current expected live checks:
 
-- GitHub repo
-- README
-- proof JSON
-- Moltbook post
-- X post
-- demo video
+- `USDC -> OKB`: successful pre-execution verdict
+- `USDC -> USDT`: successful pre-execution verdict
+- `USDC -> WBTC`: honest insufficient-liquidity failure case
 
-## 5. Demo Video
+## 3. Demo Video
 
-Recommended 90-second structure:
+Recommended 75-second structure:
 
-1. problem: best-quote-wins is not enough
-2. input: show one swap intent
-3. output: show ranked routes and verdict
-4. proof: show honest low-liquidity failure case
-5. positioning: reusable execution judgment layer for X Layer agents
+1. Problem: best-quote-wins is not enough for autonomous agents.
+2. Input: show one agent trade intent.
+3. Output: show `execute / resize / retry / block` decision.
+4. Proof: show `proof_id`, checks, and route candidates.
+5. Honest failure: show insufficient-liquidity case.
+6. Positioning: reusable pre-execution referee for X Layer agents.
+
+## 4. Public Posts
+
+- post the Moltbook submission using `docs/submission-post.md`
+- publish the X post using `docs/x-post.md`
+
+## 5. Google Form Links
+
+Prepare:
+
+- GitHub repo: `https://github.com/richard7463/xlayer-route-referee`
+- README: `https://github.com/richard7463/xlayer-route-referee/blob/main/README.md`
+- proof JSON: `https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-latest.json`
+- Moltbook post link
+- X post link
+- demo video link

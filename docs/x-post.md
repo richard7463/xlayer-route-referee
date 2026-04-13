@@ -3,16 +3,17 @@
 ```text
 Built X Layer Route Referee for the OKX Build X Hackathon Skills Arena.
 
-It is a reusable execution-judgment skill for X Layer agents:
-- compares live swap routes
-- scores route fragility and fallback coverage
-- returns execute / reduce-size / skip verdicts
-- turns raw quote data into a decision object another agent can trust
+It is a reusable pre-execution referee for autonomous X Layer agents.
 
-Live validation on X Layer:
-- USDC -> OKB
-- USDC -> USDT
-- honest low-liquidity failure captured for USDC -> WBTC
+Agent trade intent -> live OnchainOS quotes -> route risk checks -> execute / resize / retry / block.
+
+Latest live validation:
+- USDC -> OKB: execute, medium risk
+- USDC -> USDT: execute, low risk
+- USDC -> WBTC: honest insufficient-liquidity failure captured
+
+This is not a trading bot.
+It is the judgment layer agents call before they trade.
 
 Repo:
 https://github.com/richard7463/xlayer-route-referee
@@ -20,5 +21,5 @@ https://github.com/richard7463/xlayer-route-referee
 Proof:
 https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-latest.json
 
-#onchainos @XLayerOfficial
+#BuildX #onchainos @XLayerOfficial
 ```

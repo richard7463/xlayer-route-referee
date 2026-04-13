@@ -8,51 +8,47 @@ Body:
 
 ```md
 Project name: X Layer Route Referee
-Track: Skill Arena
+Track: Skills Arena
 Builder: richard7463
 Repo: https://github.com/richard7463/xlayer-route-referee
 Agent profile: https://www.moltbook.com/u/routereferee
 
 Summary
-X Layer Route Referee is a reusable execution-judgment skill for agents on X Layer.
-It does not stop at best-quote-wins. It judges whether the route is reliable enough to execute, whether the order should be reduced, or whether the agent should skip entirely.
+X Layer Route Referee is a reusable pre-execution referee skill for autonomous X Layer agents.
+
+It does not stop at best-quote-wins. It takes an agent trade intent and returns a verdict:
+execute, resize, retry, or block.
 
 What it does
 - resolves tokens on X Layer
-- fetches liquidity venues through OnchainOS
+- fetches live liquidity venues through OnchainOS
 - compares aggregated and isolated venue routes
-- scores route fragility and fallback coverage
-- returns a structured verdict: execute / reduce-size / skip
-- explains route choice in an agent-ready and Moltbook-ready format
+- checks route availability, price impact, fallback coverage, banned venue exclusion, and agent reason
+- returns a structured decision object with proof_id
+- produces an agent-readable explanation for logs, Moltbook, or downstream execution agents
 
-Why this belongs in Skill Arena
+Why this belongs in Skills Arena
 This is a reusable capability, not a full app shell.
-Any trading, treasury, portfolio, or bounty agent can call it before execution.
+Any trading, treasury, payment, or bounty agent can call it before execution.
 
 OnchainOS usage
 - token discovery
 - liquidity-source discovery
 - quote retrieval
-- route comparison on live X Layer venues
-
-Why it matters
-Most agents can fetch a quote.
-Far fewer can judge whether the route behind that quote is fragile.
-Route Referee turns raw quote data into a decision object another agent can trust.
+- Uniswap and non-Uniswap route comparison on live X Layer venues
 
 Live validation
-- verified against live OnchainOS quote endpoints on April 10, 2026
-- successful live route checks:
-  - USDC -> OKB
-  - USDC -> USDT
-- honest failure case captured:
-  - USDC -> WBTC returned insufficient liquidity
+Captured on April 13, 2026 against live OnchainOS quote endpoints:
+- USDC -> OKB: execute, medium risk, proof route_referee_66ae6fe48c673a5f
+- USDC -> USDT: execute, low risk, proof route_referee_c6c38d0ef9b68647
+- USDC -> WBTC: honest insufficient-liquidity failure captured
 
 Proof
-- live validation doc: https://github.com/richard7463/xlayer-route-referee/blob/main/docs/live-validation.md
-- latest live proof json: https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-latest.json
+- latest proof JSON: https://github.com/richard7463/xlayer-route-referee/blob/main/examples/live-proof-latest.json
+- validation notes: https://github.com/richard7463/xlayer-route-referee/blob/main/docs/live-validation.md
 
 Positioning
-This is the execution-judgment layer for X Layer agents.
-It is designed to sit directly before swap execution and improve route quality, explainability, and agent reliability across the ecosystem.
+Most agents can fetch a quote.
+Far fewer can judge whether that quote is safe enough to execute.
+Route Referee is the pre-execution judgment layer for X Layer agents.
 ```

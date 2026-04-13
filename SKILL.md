@@ -1,73 +1,87 @@
 ---
 name: xlayer-route-referee
-description: Use this skill when an agent needs to compare X Layer swap routes, rank DEX options, decide whether execution should proceed, or turn quote data into a structured execution recommendation.
+description: Use this skill when an agent needs a pre-execution verdict for an X Layer swap intent: compare routes, assess price impact and fallback coverage, exclude banned venues, and return execute / resize / retry / block with proof.
 ---
 
 # X Layer Route Referee
 
-Use this skill to evaluate one swap intent on X Layer and return the most reliable route recommendation.
+Use this skill to evaluate one swap intent on X Layer before execution.
 
 The goal is not just to find the highest quoted output.
-The goal is to judge route quality.
+The goal is to judge whether the route is safe enough for an autonomous agent to execute.
 
 ## When to use it
 
-- The user wants to swap on X Layer and needs the best route.
-- Another agent needs a reusable route-evaluation capability.
-- The caller wants a quote plus route-quality explanation.
-- The caller wants to compare Uniswap against other available venues.
-- The caller wants a structured `execute / reduce-size / skip` decision.
+- An agent is about to swap on X Layer.
+- A trading bot needs to decide whether to execute, resize, retry, or block.
+- A treasury agent needs route evidence before rebalancing.
+- A payment agent needs to avoid fragile or banned venues.
+- A caller wants Uniswap compared against other available X Layer liquidity venues.
+- A caller wants a Moltbook-ready execution explanation.
 
-## Required capabilities
+## Required factual layer
 
-Use `OnchainOS` as the factual layer:
+Use OnchainOS as the factual layer:
 
-- `DEX token` for token discovery and decimals
-- `DEX liquidity` for available venues
-- `DEX quote` for baseline and isolated route quotes
-- optional wallet or swap layers only after a route recommendation is accepted
+- token discovery for token addresses and decimals
+- liquidity-source discovery for available venues
+- quote retrieval for baseline and isolated route quotes
+- optional wallet or swap execution only after the route referee returns an acceptable verdict
 
-Do not invent tokens, quotes, price impact, or venues.
+Do not invent tokens, quotes, price impact, route names, or liquidity venues.
+
+## Input fields
+
+Extract or ask for:
+
+- `agent_name`
+- `intent_id`
+- `from_token`
+- `to_token`
+- `amount`
+- optional `slippage_percent`
+- optional `preferred_dexes`
+- optional `banned_dexes`
+- optional `reason`
+- optional `max_price_impact_percent`
+- optional `min_fallback_count`
 
 ## Workflow
 
-1. Extract:
-   - `from token`
-   - `to token`
-   - `amount`
-   - optional `slippage`
-   - optional `preferred DEX list`
-   - optional `banned DEX list`
-2. Resolve both token addresses on X Layer.
-3. Pull the available liquidity sources.
-4. Get the baseline aggregated quote.
-5. Get isolated quotes for the strongest venues.
-6. Rank candidates on:
-   - expected output
-   - price impact
-   - route concentration
-   - fallback coverage
-7. Return exactly one final verdict:
+1. Resolve both token addresses on X Layer.
+2. Pull available liquidity sources.
+3. Get the baseline aggregated quote.
+4. Get isolated quotes for major venues, especially preferred venues such as Uniswap.
+5. Rank candidates by output, price impact, route concentration, and fallback coverage.
+6. Run checks:
+   - `quote_available`
+   - `price_impact`
+   - `fallback_coverage`
+   - `banned_dex_exclusion`
+   - `agent_reason`
+7. Return one final verdict:
    - `execute`
-   - `reduce-size`
-   - `skip`
-8. Explain the verdict with route evidence, not vague intuition.
+   - `resize`
+   - `retry`
+   - `block`
+8. Include a proof ID and agent-ready summary.
 
 ## Fixed output
 
 Always return these sections in this order:
 
-1. `Swap intent`
-2. `Best route`
+1. `Agent trade intent`
+2. `Recommended route`
 3. `Alternative routes`
-4. `Risk view`
-5. `Verdict`
-6. `Agent-ready summary`
+4. `Referee checks`
+5. `Decision`
+6. `Proof ID`
+7. `Agent-ready summary`
 
-## Output guidance
+## Decision guidance
 
-- Keep the answer structured.
-- Do not hide tradeoffs when the best-output route is fragile.
-- If impact is too high, prefer `reduce-size` over pretending the route is clean.
-- If route quality is weak across the board, return `skip`.
+- Use `execute` only when quote, impact, fallback, and policy checks are acceptable.
+- Use `resize` when route exists but size is too aggressive for impact constraints.
+- Use `retry` when the route is available but fragile or insufficiently covered by fallbacks.
+- Use `block` when impact or policy failure makes execution unacceptable.
 - If Uniswap is present, state whether it won or lost and why.

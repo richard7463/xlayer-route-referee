@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 from decimal import Decimal
 from typing import Any, Dict, List
 
 from .client import OnchainOSClient, OnchainOSError
-from .models import RefereeRequest, RefereeResponse, RouteCandidate
+from .models import RefereeCheck, RefereeDecision, RefereeRequest, RefereeResponse, RouteCandidate
 
 
 class RouteReferee:
@@ -62,15 +63,21 @@ class RouteReferee:
         candidates = sorted(candidates, key=self._sort_key, reverse=True)
         recommended = candidates[0]
         alternatives = candidates[1:4]
-        verdict = self._final_verdict(recommended)
-        route_risk = self._risk_bucket(recommended.route_concentration_score, recommended.price_impact_percent)
-        summary = self._summary(recommended, alternatives, verdict)
+        checks = self._checks(request, recommended, alternatives)
+        decision = self._decision(request, recommended, checks)
+        verdict = decision.action
+        route_risk = decision.risk_level
+        proof_id = self._proof_id(request, recommended, checks, verdict)
+        summary = self._summary(request, recommended, alternatives, decision)
         return RefereeResponse(
             request=request,
             verdict=verdict,
             route_risk=route_risk,
             recommended_route=recommended,
             alternative_routes=alternatives,
+            checks=checks,
+            decision=decision,
+            proof_id=proof_id,
             agent_summary=summary,
         )
 
@@ -116,10 +123,12 @@ class RouteReferee:
 
     @staticmethod
     def _hint(route_concentration_score: Decimal, price_impact: Decimal) -> str:
+        if price_impact > Decimal("2.00"):
+            return "block"
         if price_impact > Decimal("1.20"):
-            return "reduce-size"
+            return "resize"
         if route_concentration_score < Decimal("0.45"):
-            return "skip"
+            return "retry"
         return "execute"
 
     @staticmethod
@@ -137,23 +146,102 @@ class RouteReferee:
             candidate.fallback_count,
         )
 
+    def _checks(self, request: RefereeRequest, recommended: RouteCandidate, alternatives: List[RouteCandidate]) -> List[RefereeCheck]:
+        checks = [
+            RefereeCheck(
+                id="quote_available",
+                ok=True,
+                level="pass",
+                note=f"recommended route={recommended.dex_name}",
+            ),
+            RefereeCheck(
+                id="price_impact",
+                ok=recommended.price_impact_percent <= request.max_price_impact_percent,
+                level="pass" if recommended.price_impact_percent <= request.max_price_impact_percent else "warn",
+                note=f"impact={recommended.price_impact_percent}% max={request.max_price_impact_percent}%",
+            ),
+            RefereeCheck(
+                id="fallback_coverage",
+                ok=recommended.fallback_count >= request.min_fallback_count or len(alternatives) >= request.min_fallback_count,
+                level="pass" if recommended.fallback_count >= request.min_fallback_count or len(alternatives) >= request.min_fallback_count else "warn",
+                note=f"candidate_fallbacks={recommended.fallback_count} alternatives={len(alternatives)} required={request.min_fallback_count}",
+            ),
+            RefereeCheck(
+                id="banned_dex_exclusion",
+                ok=recommended.dex_name.lower() not in {dex.lower() for dex in request.banned_dexes},
+                level="pass",
+                note=f"banned={','.join(request.banned_dexes) or 'none'}",
+            ),
+            RefereeCheck(
+                id="agent_reason",
+                ok=bool(request.reason.strip()),
+                level="pass" if request.reason.strip() else "warn",
+                note=request.reason.strip() or "missing reason",
+            ),
+        ]
+        return checks
+
     @staticmethod
     def _risk_bucket(route_concentration_score: Decimal, price_impact: Decimal) -> str:
+        if price_impact > Decimal("2.00"):
+            return "critical"
         if price_impact > Decimal("1.20") or route_concentration_score < Decimal("0.45"):
             return "high"
         if price_impact > Decimal("0.60") or route_concentration_score < Decimal("0.70"):
             return "medium"
         return "low"
 
-    @staticmethod
-    def _final_verdict(candidate: RouteCandidate) -> str:
-        return candidate.verdict_hint
+    def _decision(self, request: RefereeRequest, recommended: RouteCandidate, checks: List[RefereeCheck]) -> RefereeDecision:
+        failed = [check.id for check in checks if not check.ok]
+        risk_level = self._risk_bucket(recommended.route_concentration_score, recommended.price_impact_percent)
+        if recommended.price_impact_percent > Decimal("2.00"):
+            action = "block"
+            size = Decimal("0")
+        elif recommended.price_impact_percent > request.max_price_impact_percent:
+            action = "resize"
+            size = max(Decimal("0.10"), request.max_price_impact_percent / max(recommended.price_impact_percent, Decimal("0.01"))).quantize(Decimal("0.01"))
+        elif "fallback_coverage" in failed:
+            action = "retry"
+            size = Decimal("1.00")
+        else:
+            action = recommended.verdict_hint
+            size = Decimal("1.00") if action == "execute" else Decimal("0.50")
+
+        rationale = (
+            f"{action}: {recommended.dex_name} is the best current route for {request.agent_name} intent {request.intent_id}; "
+            f"risk={risk_level}, impact={recommended.price_impact_percent}%, fallback_count={recommended.fallback_count}."
+        )
+        return RefereeDecision(
+            action=action,
+            risk_level=risk_level,
+            recommended_size_multiplier=size,
+            policy_hits=failed or ["route_within_referee_limits"],
+            rationale=rationale,
+        )
 
     @staticmethod
-    def _summary(recommended: RouteCandidate, alternatives: List[RouteCandidate], verdict: str) -> str:
+    def _proof_id(request: RefereeRequest, recommended: RouteCandidate, checks: List[RefereeCheck], verdict: str) -> str:
+        material = "|".join(
+            [
+                request.agent_name,
+                request.intent_id,
+                request.from_token,
+                request.to_token,
+                str(request.amount),
+                recommended.dex_name,
+                str(recommended.output_amount),
+                verdict,
+                ",".join(f"{check.id}:{check.ok}" for check in checks),
+            ]
+        )
+        return "route_referee_" + hashlib.sha256(material.encode()).hexdigest()[:16]
+
+    @staticmethod
+    def _summary(request: RefereeRequest, recommended: RouteCandidate, alternatives: List[RouteCandidate], decision: RefereeDecision) -> str:
         alt_names = ", ".join(candidate.dex_name for candidate in alternatives) if alternatives else "no viable fallback"
         return (
-            f"Verdict: {verdict}. Prefer {recommended.dex_name} because it offers {recommended.output_amount} "
-            f"{recommended.output_symbol} with {recommended.price_impact_percent}% impact. "
-            f"Alternatives checked: {alt_names}."
+            f"Pre-execution verdict: {decision.action}. Agent={request.agent_name}, intent={request.intent_id}. "
+            f"Prefer {recommended.dex_name}: {recommended.output_amount} {recommended.output_symbol}, "
+            f"impact={recommended.price_impact_percent}%, risk={decision.risk_level}. "
+            f"Alternatives checked: {alt_names}. {decision.rationale}"
         )
